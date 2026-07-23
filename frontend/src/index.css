@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply text-ink font-body;
+  background: linear-gradient(-45deg, #e0e7ff, #fce7f3, #f8fafc, #e0e7ff);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+::selection {
+  background: #e0e7ff;
+}
+
+:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  @apply bg-surface backdrop-blur-md border border-white/40 shadow-xl shadow-indigo-500/5;
+}
+
+.glass-panel-darker {
+  @apply bg-surfaceDark backdrop-blur-xl border border-white/60 shadow-2xl shadow-indigo-500/10;
+}
+
+/* Input floating label utility styles */
+.input-group {
+  position: relative;
+}
+
+.input-field {
+  @apply w-full rounded-xl border border-line bg-white/70 backdrop-blur-sm px-4 py-3 text-sm outline-none transition-all duration-300 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20;
+}
+
+.input-label {
+  @apply absolute left-3 top-3 text-sm text-ink/50 transition-all duration-300 pointer-events-none px-1 bg-transparent;
+}
+
+.input-field:focus ~ .input-label,
+.input-field:not(:placeholder-shown) ~ .input-label {
+  @apply -top-2 text-xs font-medium text-primary bg-white/90 backdrop-blur-sm rounded-md px-1;
+}

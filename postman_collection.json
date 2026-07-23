@@ -1,0 +1,197 @@
+{
+  "info": {
+    "name": "Employee Leave Management System",
+    "description": "JWT-authenticated API for the Leave Management System (Django REST Framework). Set the {{base_url}}, {{access_token}}, and {{refresh_token}} collection variables after logging in.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api" },
+    { "key": "access_token", "value": "" },
+    { "key": "refresh_token", "value": "" },
+    { "key": "leave_id", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/login/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"employee1\",\n  \"password\": \"Employee@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/refresh/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout (blacklist refresh token)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/logout/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get my profile (/me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/auth/me/"
+          }
+        },
+        {
+          "name": "List my employees (manager only, search + pagination)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/auth/employees/?search=&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "employees", ""],
+              "query": [
+                { "key": "search", "value": "" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employee - Leaves",
+      "item": [
+        {
+          "name": "Apply for leave",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/leaves/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"start_date\": \"2026-08-10\",\n  \"end_date\": \"2026-08-12\",\n  \"reason\": \"Family function\"\n}"
+            }
+          }
+        },
+        {
+          "name": "View my leave history",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/leaves/?status=&search=&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["leaves", ""],
+              "query": [
+                { "key": "status", "value": "" },
+                { "key": "search", "value": "" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancel a pending leave",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/leaves/{{leave_id}}/"
+          }
+        },
+        {
+          "name": "Employee dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/dashboard/employee/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Manager - Leaves",
+      "item": [
+        {
+          "name": "View all team leave requests (filter by status)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/leaves/?status=pending&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["leaves", ""],
+              "query": [
+                { "key": "status", "value": "pending" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Approve leave",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/leaves/{{leave_id}}/approve/",
+            "body": { "mode": "raw", "raw": "{\n  \"decision_note\": \"Approved, enjoy!\"\n}" }
+          }
+        },
+        {
+          "name": "Reject leave",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/leaves/{{leave_id}}/reject/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision_note\": \"Clashes with sprint deadline\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Manager dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/dashboard/manager/"
+          }
+        },
+        {
+          "name": "Employee leave statistics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": "{{base_url}}/stats/employees/"
+          }
+        }
+      ]
+    }
+  ]
+}
