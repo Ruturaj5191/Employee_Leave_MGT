@@ -1,19 +1,12 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-
-from .views import (
-    LeaveViewSet,
-    EmployeeDashboardView,
-    ManagerDashboardView,
-    EmployeeLeaveStatsView,
-)
-
-router = DefaultRouter()
-router.register("leaves", LeaveViewSet, basename="leave")
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    path("", include(router.urls)),
-    path("dashboard/employee/", EmployeeDashboardView.as_view(), name="employee-dashboard"),
-    path("dashboard/manager/", ManagerDashboardView.as_view(), name="manager-dashboard"),
-    path("stats/employees/", EmployeeLeaveStatsView.as_view(), name="employee-leave-stats"),
+    path("leaves/", views.leave_list_create, name="leave-list-create"),
+    path("leaves/<int:pk>/", views.leave_detail_cancel, name="leave-detail-cancel"),
+    path("leaves/<int:pk>/approve/", views.leave_approve, name="leave-approve"),
+    path("leaves/<int:pk>/reject/", views.leave_reject, name="leave-reject"),
+    path("dashboard/employee/", views.employee_dashboard, name="employee-dashboard"),
+    path("dashboard/manager/", views.manager_dashboard, name="manager-dashboard"),
+    path("stats/employees/", views.employee_leave_stats, name="employee-leave-stats"),
 ]
